@@ -1,3 +1,6 @@
+import normalize
+
+
 def main():
     pass
 
