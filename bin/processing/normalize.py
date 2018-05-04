@@ -54,24 +54,9 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
     else:
         logging.debug("process_tweet(): Bypassing processing step, loading 'postprocessed.pkl'.")
         df_tweets = joblib.load('../data/postprocessed.pkl')
-    # region Generate or Load Class-Separated Features
-    if not (os.path.isfile('../data/corpus/class_0_tweet_list.pkl') and
-            os.path.isfile('../data/corpus/class_1_tweet_list.pkl') and
-            os.path.isfile('../data/corpus/class_2_tweet_list.pkl')):
-        class0_words, class1_words, class2_words = generate_corpus(df_tweets, col='tweet')
-        class0_emoji, class1_emoji, class2_emoji = generate_corpus(df_tweets, col='emoji')
-        class0_hash, class1_hash, class2_hash = generate_corpus(df_tweets, col='hashtag')
-    else:
-        class0_words = joblib.load('../data/corpus/class_0_tweet_list.pkl')
-        class1_words = joblib.load('../data/corpus/class_1_tweet_list.pkl')
-        class2_words = joblib.load('../data/corpus/class_2_tweet_list.pkl')
-        class0_emoji = joblib.load('../data/corpus/class_0_emoji_list.pkl')
-        class1_emoji = joblib.load('../data/corpus/class_1_emoji_list.pkl')
-        class2_emoji = joblib.load('../data/corpus/class_2_emoji_list.pkl')
-        class0_hash = joblib.load('../data/corpus/class_0_hashtag_list.pkl')
-        class1_hash = joblib.load('../data/corpus/class_1_hashtag_list.pkl')
-        class2_hash = joblib.load('../data/corpus/class_2_hashtag_list.pkl')
-    # endregion
+    # TODO Incorporate part of speech tagging, move up, and rerun preprocessed
+    return df_tweets
+
 
 
 # region Helper Functions
@@ -137,27 +122,6 @@ def trigram_creation(corpus):
 
 
 # region Post-tokenizing Workflow
-def generate_corpus(df, col):
-    """
-    Gathers words present in each class of tweets, dumping to pkl and returning list if exists
-    :param df: Passed in tweet dataframe
-    :return: List of list of words
-    """
-    logging.debug('Entering generate_corpus() for column ' + col + '.')
-    output = []
-    for i in range(3):
-        logging.debug('generate_corpus(): Iteration ' + str(i + 1) + ' of 3.')
-        x = df[df['class'] == i][col]
-        words = []
-        for item in x:
-            for word in item:
-                words.append(word)
-        joblib.dump(words, '../data/corpus/class_' + str(i) + '_' + col + 'list.pkl')
-        output.append(words)
-    logging.debug('Exiting generate_corpus()')
-    return output[0], output[1], output[2]
-
-
 def case_correction(text):
     """Returns lowercase string"""
     return text.lower()
