@@ -19,12 +19,17 @@ def generate_dictionary(location):
 def load_dictionary(location='../data/wordlist.pkl'):
     """
     Loads generated dictionary file, adds custom words
-    :return: None
+    :return: Counter object with word counts representing dictionary of words
     """
-    return joblib.load(location)
-    # TODO sis, vixen, ho, hoe, aint, nigga, bitches, lmao, bitch, pussy, fuck, fucking, fag
-    # TODO hater, haters, lol, nigger, niggers, yal, faggots, nfl, fucked, nips, crap, whitey, ghetto, macs
-    # TODO tho, jamming, sipin, titties, dyke, fb, lmfao, bae, kanye, coons, niggas
+    words = joblib.load(location)
+    # Simple plurals not necessary since removed in word correction
+    manual_addition = ['sis', 'vixen' ,'ho', 'hoe', 'aint', 'nigga', 'nigger', 'bitch', 'bitches', 'lmao', 'pussy',
+                       'fuck', 'fucking', 'fag', 'faggot', 'hater', 'lol', 'yall', 'nfl', 'fucked', 'nips', 'crap',
+                       'whitey', 'ghetto', 'mac', 'tho', 'jamming', 'titties', 'dyke', 'fb', 'lmfao', 'bae', 'kanye',
+                       'coon', 'smh', 'tweet', 'retweet']
+    for word in manual_addition:
+        words[word] = 99999  # add word to counter
+    return words
 
 
 def remove_repeated_characters(word):
