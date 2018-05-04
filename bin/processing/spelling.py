@@ -1,3 +1,4 @@
+import logging
 import re
 from collections import Counter
 
@@ -17,10 +18,13 @@ def generate_dictionary(location):
 
 def load_dictionary(location='../data/wordlist.pkl'):
     """
-    Loads generated dictionary file
+    Loads generated dictionary file, adds custom words
     :return: None
     """
     return joblib.load(location)
+    # TODO sis, vixen, ho, hoe, aint, nigga, bitches, lmao, bitch, pussy, fuck, fucking, fag
+    # TODO hater, haters, lol, nigger, niggers, yal, faggots, nfl, fucked, nips, crap, whitey, ghetto, macs
+    # TODO tho, jamming, sipin, titties, dyke, fb, lmfao, bae, kanye, coons, niggas
 
 
 def remove_repeated_characters(word):
@@ -40,17 +44,16 @@ def remove_repeated_characters(word):
     return [get_real_word(word) for word in word]
 
 
-def spelling_normalization(word, dictionary):
+def spelling_normalization(words, dictionary):
     """
     Replaces incorrectly-spelled word with most likely candidate based upon word frequency in dictionary corpus
     Code mostly taken from Text Analytics With Python (Apress)
-    :param word: Word to be processed
+    :param words: Word to be processed
     :return: Spell-corrected word
     """
 
-    def edits0(word):
-        """Return 0-edits away"""
-        return {word}
+    logging.debug('spelling_normalization(): Incoming words: ')
+    logging.debug(words)
 
     def edits1(word):
         """Return 1-edits away"""
@@ -74,12 +77,19 @@ def spelling_normalization(word, dictionary):
     def known(words):
         return {w for w in words if w in dictionary}
 
-    candidates = (known(edits0(word)) or
-                  known(edits1(word)) or
-                  known(edits2(word)) or
-                  [word])
+    corrected = []
+    for word in words:
+        if word.isnumeric():
+            corrected.append(word)
+            continue
+        if word in dictionary or wordnet.synsets(word):
+            corrected.append(word)
+            continue
+        candidates = (known(edits1(word)) or
+                      known(edits2(word)) or
+                      [word])
 
-    return max(candidates, key=dictionary.get)
-
-
-
+        corrected.append(max(candidates, key=dictionary.get))
+    logging.debug('spelling_normalization(): Outgoing words:')
+    logging.debug(corrected)
+    return corrected

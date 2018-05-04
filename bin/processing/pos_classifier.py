@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 
 
-def load_pos_classifier(name='bayes'):
+def load_pos_classifier(name):
     return joblib.load('../data/pos_' + name + '_classifier.pkl')
 
 
