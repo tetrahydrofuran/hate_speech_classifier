@@ -1,4 +1,4 @@
-## Toxicity Classifier  
+## Hate Speech Classifier  
 
 This project was created as part of the Metis data science bootcamp.
 

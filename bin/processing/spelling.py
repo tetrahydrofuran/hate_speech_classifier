@@ -26,7 +26,7 @@ def load_dictionary(location='../data/wordlist.pkl'):
     manual_addition = ['sis', 'vixen' ,'ho', 'hoe', 'aint', 'nigga', 'nigger', 'bitch', 'bitches', 'lmao', 'pussy',
                        'fuck', 'fucking', 'fag', 'faggot', 'hater', 'lol', 'yall', 'nfl', 'fucked', 'nips', 'crap',
                        'whitey', 'ghetto', 'mac', 'tho', 'jamming', 'titties', 'dyke', 'fb', 'lmfao', 'bae', 'kanye',
-                       'coon', 'smh', 'tweet', 'retweet']
+                       'coon', 'smh', 'tweet', 'retweet', 'nbc', 'jk', 'im']
     for word in manual_addition:
         words[word] = 99999  # add word to counter
     return words
