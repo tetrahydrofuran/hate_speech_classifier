@@ -1,20 +1,48 @@
 import logging
+import os
 import re
 import string
 from collections import Counter
 
 import nltk
-from nltk.corpus import wordnet
+
+from . import spelling as sp
 
 
-def process_text(incoming):
-    # TODO: Logging
-    logging.debug('Incoming text: ')
-    logging.debug('')
-    pass
-    logging.debug('Outgoing text: ')
-    logging.debug('')
+def process_tweet(df_tweets, colname = 'tweet'):
+    """
+    TODO: Fill out
+    :param df_tweets: pandas DataFrame
+    :param colname: String name of column containing tweet
+    :return:
+    """
+    logging.debug('Entering process_tweet()')
 
+    # Cleaning
+    df_tweets[colname] = df_tweets[colname].apply(remove_mentions)
+    df_tweets[colname] = df_tweets[colname].apply(remove_retweets)
+    df_tweets['emoji'] = df_tweets[colname].apply(emoji_extraction)
+    df_tweets[colname] = df_tweets[colname].apply(emoji_removal)
+    df_tweets[colname] = df_tweets[colname].apply(clean_special_characters)
+    df_tweets['hashtag'] = df_tweets[colname].apply(hashtag_extraction)
+    df_tweets[colname] = df_tweets[colname].apply(hashtag_removal)
+
+    # Tokenizing
+    df_tweets[colname] = df_tweets[colname].apply(tokenize)
+    # region Spelling workflow
+    logging.debug('process_tweet(): Entering spelling workflow')
+    dict_location = '../data/wordlist.pkl'
+    if os.path.isfile(dict_location):
+        word_dict = sp.load_dictionary(dict_location)
+    else:
+        sp.generate_dictionary(dict_location)
+        word_dict = sp.load_dictionary(dict_location)
+    df_tweets[colname] = df_tweets[colname].apply(sp.remove_repeated_characters)
+    df_tweets[colname] = df_tweets[colname].apply(sp.spelling_normalization, args=(word_dict, ))
+
+    # endregion
+    df_tweets['bigram'] = df_tweets[colname].apply(bigram_creation)
+    df_tweets['trigram'] = df_tweets[colname].apply(trigram_creation)
 
 # region Pre-tokenizing Workflow
 def remove_mentions(element):
@@ -91,22 +119,4 @@ def stopword_removal(text):
     stopwords = nltk.corpus.stopwords.words('english')
     return [word for word in text if word not in stopwords]
 
-
-def repeating_letter_removal(text):
-    pass
-
-
-def remove_repeated_characters(words):
-    def get_real_word(word):
-        if wordnet.synsets(word):
-            return word
-        new_word = repeats.sub(match_sub, word)
-        return get_real_word(new_word) if new_word != word else new_word
-    repeats = re.compile(r'(\w*)(\w)\2(\w*)')
-    match_sub = r'\1\2\3'
-    return [get_real_word(word) for word in words]
-
-
-def spelling_normalization(text):
-    pass
 # endregion

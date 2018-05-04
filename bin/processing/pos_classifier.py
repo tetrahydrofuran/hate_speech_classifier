@@ -1,5 +1,4 @@
 import logging
-import pickle
 
 from nltk.corpus import treebank
 from sklearn import tree
@@ -10,7 +9,7 @@ from sklearn.naive_bayes import GaussianNB
 
 
 def load_pos_classifier(name='bayes'):
-    return pickle.load(open('../data/pos_' + name + '_classifier.pkl', 'rb'))
+    return joblib.load('../data/pos_' + name + '_classifier.pkl')
 
 
 # Due to memory constraints, data available to the model is limited to 1500 sentences
