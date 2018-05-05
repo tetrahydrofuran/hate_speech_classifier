@@ -6,9 +6,9 @@ import string
 import nltk
 from nltk.stem.porter import PorterStemmer
 from sklearn.externals import joblib
-from sklearn.model_selection import train_test_split
 
 from . import spelling as sp
+from . import pos_classifier as pc
 
 
 def process_tweets(df_tweets, colname='tweet', reprocess=False):
@@ -32,29 +32,41 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
         df_tweets[colname] = df_tweets[colname].apply(clean_special_characters)
         # Tokenizing
         df_tweets[colname] = df_tweets[colname].apply(tokenize)
+        logging.debug('process_tweets(): Checkpoint 1')
+        joblib.dump(df_tweets, '../data/normalize-checkpoints/point1.pkl')
+
         # region Spelling workflow
-        logging.debug('process_tweet(): Entering spelling workflow')
+        logging.debug('process_tweets(): Entering spelling workflow')
         dict_location = '../data/wordlist.pkl'
         if os.path.isfile(dict_location):
             word_dict = sp.load_dictionary(dict_location)
         else:
             sp.generate_dictionary(dict_location)
             word_dict = sp.load_dictionary(dict_location)
-        df_tweets[colname] = df_tweets[colname].apply(sp.remove_repeated_characters)
+
         df_tweets[colname] = df_tweets[colname].apply(sp.spelling_normalization, args=(word_dict, ))
+        df_tweets[colname] = df_tweets[colname].apply(sp.remove_repeated_characters)
         # endregion
 
+        logging.debug('process_tweets(): Checkpoint 2')
+        joblib.dump(df_tweets, '../data/normalize-checkpoints/point2.pkl')
+
+        # TODO: Part of Speech Tagging
+        classifier = pc.get_classifier()
+        logging.debug('process_tweets(): Tagging POS.')
+        df_tweets['pos'] = df_tweets[colname].apply(pc.tag, args=(classifier, ))
+
+        logging.debug('process_tweets(): Checkpoint 3')
+        joblib.dump(df_tweets, '../data/normalize-checkpoints/point3.pkl')
+
         df_tweets[colname] = df_tweets[colname].apply(porter_stemming)
-        # TODO insert shallow parse, if time
-        # TODO part of speech tagging
-        # TODO maybe don't remove stopwords?
-        df_tweets[colname] = df_tweets[colname].apply(stopword_removal)
+        # df_tweets[colname] = df_tweets[colname].apply(stopword_removal)
         df_tweets['bigram'] = df_tweets[colname].apply(bigram_creation)
         df_tweets['trigram'] = df_tweets[colname].apply(trigram_creation)
-        logging.debug("Dumping processed dataframe into '../data/postprocessed.pkl'")
+        logging.debug("process_tweets(): Dumping processed dataframe into '../data/postprocessed.pkl'")
         joblib.dump(df_tweets, '../data/postprocessed.pkl')
     else:
-        logging.debug("process_tweet(): Bypassing processing step, loading 'postprocessed.pkl'.")
+        logging.debug("process_tweets(): Bypassing processing step, loading 'postprocessed.pkl'.")
         df_tweets = joblib.load('../data/postprocessed.pkl')
     # TODO rerun processing with changes
     return df_tweets

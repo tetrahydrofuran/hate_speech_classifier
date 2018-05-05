@@ -54,6 +54,7 @@ def spelling_normalization(words, dictionary):
     Replaces incorrectly-spelled word with most likely candidate based upon word frequency in dictionary corpus
     Code mostly taken from Text Analytics With Python (Apress)
     :param words: Word to be processed
+    :param dictionary: List of words and frequency counts to compare against
     :return: Spell-corrected word
     """
 

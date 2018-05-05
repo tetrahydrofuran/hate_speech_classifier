@@ -6,6 +6,25 @@ import logging
 import os
 
 
+# Would be better to have a global classifier instance, but not quite sure how to do that nicely in python
+def get_classifier():
+    if os.path.isfile('../data/models/pos_bayes_classifier.pkl'):
+        logging.debug('pos_classifier.tag(): Loading existing classifier.')
+        classifier = joblib.load('../data/models/pos_bayes_classifier.pkl')
+    else:
+        logging.debug('pos_classifier.tag(): Classifier not found.  Recreating.')
+        classifier = train_classifier()
+    return classifier
+
+
+def tag(text, classifier):
+    tags = []
+    for i in range(len(text)):
+        features = word_feature_extraction(text, i)
+        tags.append(classifier.classify(features))
+    return tags
+
+
 def train_classifier():
     logging.debug('Entering train_classifier()')
     tagged_sentences = brown.tagged_sents()
@@ -18,15 +37,10 @@ def train_classifier():
 
     train, test = train_test_split(feature_set, test_size=0.3, random_state=42)
     classifier = nltk.NaiveBayesClassifier.train(train)
-    logging.debug("train_classifier(): Dumping trained NB to '../data/models/pos_classifier.pkl'")
-    joblib.dump(classifier, '../data/models/pos_classifier.pkl')
-
-    # For some reason, doing nltk.classify.accuracy hangs up the process and prevents completion;
-    # added random state to enable validation separately
-    # logging.debug("train_classifier(): Checking accuracy against test set")
-    # print(nltk.classify.accuracy(classifier, test))
-
-
+    logging.debug("train_classifier(): Dumping trained NB to '../data/models/pos_bayes_classifier.pkl'")
+    joblib.dump(classifier, '../data/models/pos_bayes_classifier.pkl')
+    # External validation on 22430 samples had accuracy score and f1 score of 85.2%
+    return classifier
 
 
 def word_feature_extraction(sentence, index):
