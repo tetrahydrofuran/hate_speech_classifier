@@ -46,6 +46,8 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
 
         df_tweets[colname] = df_tweets[colname].apply(porter_stemming)
         # TODO insert shallow parse, if time
+        # TODO part of speech tagging
+        # TODO maybe don't remove stopwords?
         df_tweets[colname] = df_tweets[colname].apply(stopword_removal)
         df_tweets['bigram'] = df_tweets[colname].apply(bigram_creation)
         df_tweets['trigram'] = df_tweets[colname].apply(trigram_creation)
@@ -54,7 +56,7 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
     else:
         logging.debug("process_tweet(): Bypassing processing step, loading 'postprocessed.pkl'.")
         df_tweets = joblib.load('../data/postprocessed.pkl')
-    # TODO Incorporate part of speech tagging, move up, and rerun preprocessed
+    # TODO rerun processing with changes
     return df_tweets
 
 

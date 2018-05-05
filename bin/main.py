@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from processing import *
-from processing import pos_classifier2 as pc
+from processing import pos_classifier as pc
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -14,18 +14,17 @@ POS_CLASSIFIER = True  # True for Naive Bayes Classifier, False for Tree
 
 
 def main():
-    tweets = pd.read_csv('../data/data.csv', index_col=0)
-    tweets = normalize.process_tweets(tweets, reprocess=False)
-
-
+#    tweets = pd.read_csv('../data/data.csv', index_col=0)
+#    tweets = normalize.process_tweets(tweets, reprocess=False)
+    pc.train_classifier()
 
 def main2():
     if POS_CLASSIFIER:
-        if not os.path.isfile('../data/pos_bayes_classifier.pkl'):
+        if not os.path.isfile('../data/pos_bayes_classifier-bad.pkl'):
             pc.export_pos_classifier(classifier='bayes', state=42)
         clf = pc.load_pos_classifier('bayes')
     else:
-        if not os.path.isfile('../data/pos_tree_classifier.pkl'):
+        if not os.path.isfile('../data/pos_tree_classifier-bad.pkl'):
             clf = pc.export_pos_classifier(classifier='tree', state=42)
         clf = pc.load_pos_classifier('tree')
     pass

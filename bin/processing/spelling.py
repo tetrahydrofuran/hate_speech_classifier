@@ -87,14 +87,14 @@ def spelling_normalization(words, dictionary):
         if word.isnumeric():
             corrected.append(word)
             continue
-        if word in dictionary or wordnet.synsets(word):
+        elif word in dictionary or wordnet.synsets(word):
             corrected.append(word)
             continue
-        candidates = (known(edits1(word)) or
+        else:  # Doesn't seem to be necessary, but will be guard clause; seem to have some suspicious deletions
+            candidates = (known(edits1(word)) or
                       known(edits2(word)) or
                       [word])
-
-        corrected.append(max(candidates, key=dictionary.get))
+            corrected.append(max(candidates, key=dictionary.get))
     logging.debug('spelling_normalization(): Outgoing words:')
     logging.debug(corrected)
     return corrected

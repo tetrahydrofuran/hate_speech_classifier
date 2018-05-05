@@ -15,11 +15,11 @@ A new classifier will be constructed, and features more carefully selected.
 
 def tag_pos(data, model):
     if model:
-        if not os.path.isfile('../data/pos_bayes_classifier.pkl'):
+        if not os.path.isfile('../data/pos_bayes_classifier-bad.pkl'):
             export_pos_classifier(classifier='bayes', state=42)
         clf = load_pos_classifier('bayes')
     else:
-        if not os.path.isfile('../data/pos_tree_classifier.pkl'):
+        if not os.path.isfile('../data/pos_tree_classifier-bad.pkl'):
             export_pos_classifier(classifier='tree', state=42)
         clf = load_pos_classifier('tree')
     # TODO do the classifying
@@ -32,14 +32,14 @@ def load_pos_classifier(name):
 # Due to memory constraints, data available to the model is limited to 1500 sentences
 def export_pos_classifier(classifier, state=42):
     logging.debug('Entering export_pos_classifier()')
-    tagged = treebank.tagged_sents()[:1500]
+    tagged = treebank.tagged_sents()
     X = pos_transformer(tagged)
     Y = []
     logging.debug('exporting_pos_classifier(): Transforming response')
     for sentence in tagged:
         for k in range(len(sentence)):
             Y.append(sentence[k][1])
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, random_state=state)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, random_state=state, test_size=0.3)
     logging.debug("exporting_pos_classifier(): Dumping test set to 'pos_testX.pkl', 'pos_testY.pkl'")
     joblib.dump(X_test, '../data/pos_testX.pkl')
     joblib.dump(Y_test, '../data/pos_testY.pkl')
@@ -48,15 +48,15 @@ def export_pos_classifier(classifier, state=42):
         tree_clf = tree.DecisionTreeClassifier(criterion='entropy')
         tree_clf.fit(X_train, Y_train)
 
-        logging.debug("exporting_pos_classifier(): Dumping tree model to 'pos_tree_classifier.pkl'")
-        joblib.dump(tree_clf, '../data/pos_tree_classifier.pkl')
+        logging.debug("exporting_pos_classifier(): Dumping tree model to 'pos_tree_classifier-bad.pkl'")
+        joblib.dump(tree_clf, '../data/pos_tree_classifier-bad.pkl')
     if classifier == 'bayes':
         logging.debug('exporting_pos_classifier(): Fitting naive Bayes model')
         bayes_clf = GaussianNB()
         bayes_clf.fit(X_train, Y_train)
 
-        logging.debug("exporting_pos_classifier(): Dumping naive Bayes model to 'pos_bayes_classifier.pkl'")
-        joblib.dump(bayes_clf, '../data/pos_bayes_classifier.pkl')
+        logging.debug("exporting_pos_classifier(): Dumping naive Bayes model to 'pos_bayes_classifier-bad.pkl'")
+        joblib.dump(bayes_clf, '../data/pos_bayes_classifier-bad.pkl')
 
 
 def pos_transformer(data):
@@ -98,7 +98,7 @@ def word_feature_extraction(sentence, index):
         except:
             next_word = sentence[index + 1]
     suffix1 = word[-1]
-    # suffix2 = word[-2:]
+    suffix2 = word[-2:]
     suffix3 = word[-3:]
     # capitals = True if word.upper() == word else False
     numeric = True if word.isnumeric() else False
