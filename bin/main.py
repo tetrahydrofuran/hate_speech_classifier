@@ -15,7 +15,7 @@ POS_CLASSIFIER = True  # True for Naive Bayes Classifier, False for Tree
 
 def main():
     tweets = pd.read_csv('../data/data.csv', index_col=0)
-    tweets = normalize.process_tweets(tweets, reprocess=True)
+    tweets = normalize.process_tweets(tweets, reprocess=False)
 
 
 def main2():

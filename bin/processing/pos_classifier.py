@@ -19,9 +19,14 @@ def get_classifier():
 
 def tag(text, classifier):
     tags = []
+    logging.debug('pos_classifier.tag(): Tweet:')
+    logging.debug(text)
     for i in range(len(text)):
         features = word_feature_extraction(text, i)
         tags.append(classifier.classify(features))
+    logging.debug('pos_classifier.tag(): Tags:')
+    logging.debug(tags)
+
     return tags
 
 
