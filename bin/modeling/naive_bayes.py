@@ -15,7 +15,7 @@ def train_naive_bayes(df, column, size=0.3, state=42):
     clf.fit(Xtr.toarray(), Ytr)
     logging.debug("train_naive_bayes(): Dumping GaussianNB to '" + filepath + "'")
     joblib.dump(clf, filepath)
-    return clf, Xte, Yte
+    return clf, Xte.toarray(), Yte
 
 
 def get_naive_bayes(suffix):
