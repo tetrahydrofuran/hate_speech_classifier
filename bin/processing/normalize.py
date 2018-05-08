@@ -20,8 +20,10 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
     :param reprocess: Boolean to redo processing steps if postprocessed frame does not exist
     :return: TODO fill out
     """
-    logging.debug('Entering process_tweet()')
+    logging.debug('Entering process_tweets()')
     if not os.path.isfile('../data/postprocessed.pkl') or reprocess:
+        if reprocess:
+            logging.debug('process_tweets(): Reprocess flag set to TRUE, beginning processing.')
         # Cleaning
         df_tweets[colname] = df_tweets[colname].apply(case_correction)
         df_tweets[colname] = df_tweets[colname].apply(remove_mentions)
@@ -138,7 +140,6 @@ def bigram_creation(corpus):
     for gram in grams:
         out.append('-'.join(gram))
     return out
-
 
 
 def trigram_creation(corpus):
