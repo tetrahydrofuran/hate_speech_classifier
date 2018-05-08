@@ -10,7 +10,6 @@ pos_bayes_classifier, pos_tree_classifier trained, but due to bad workflow, is n
 * `bin`
     * `processing`
     * `modeling`
-    * `classifying`
 * `data`
     * `corpus`
     * `models`
