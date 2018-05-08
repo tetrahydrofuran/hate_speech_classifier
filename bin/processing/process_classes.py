@@ -5,7 +5,7 @@ import os
 # This was refactored out of normalize.py, and so some things are kind of unnecessary artifacts of that
 # but were too much effort to change
 
-
+# TODO: Refactor to be relevant now
 def process_classes(df, column):
     # region Generate or Load Class-Separated Features
     if not (os.path.isfile('../data/corpus/class_0_tweet_list.pkl') and

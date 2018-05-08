@@ -11,6 +11,7 @@ from . import spelling as sp
 from . import pos_classifier as pc
 
 
+# TODO run with stopwords without stopwords, save all inputs
 def process_tweets(df_tweets, colname='tweet', reprocess=False):
     """
     Processes, stems, parses, and normalizes tweet text, including separating emojis and hashtags
@@ -19,8 +20,10 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
     :param reprocess: Boolean to redo processing steps if postprocessed frame does not exist
     :return: TODO fill out
     """
-    logging.debug('Entering process_tweet()')
+    logging.debug('Entering process_tweets()')
     if not os.path.isfile('../data/postprocessed.pkl') or reprocess:
+        if reprocess:
+            logging.debug('process_tweets(): Reprocess flag set to TRUE, beginning processing.')
         # Cleaning
         df_tweets[colname] = df_tweets[colname].apply(case_correction)
         df_tweets[colname] = df_tweets[colname].apply(remove_mentions)
@@ -51,7 +54,6 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
         logging.debug('process_tweets(): Checkpoint 2')
         joblib.dump(df_tweets, '../data/normalize-checkpoints/point2.pkl')
 
-        # TODO: Part of Speech Tagging
         classifier = pc.get_classifier()
         logging.debug('process_tweets(): Tagging POS.')
         df_tweets['pos'] = df_tweets[colname].apply(pc.tag, args=(classifier, ))
@@ -60,17 +62,24 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
         joblib.dump(df_tweets, '../data/normalize-checkpoints/point3.pkl')
 
         df_tweets[colname] = df_tweets[colname].apply(porter_stemming)
-        # df_tweets[colname] = df_tweets[colname].apply(stopword_removal)
+
+        # TODO with and without stopwords?
         df_tweets['bigram'] = df_tweets[colname].apply(bigram_creation)
         df_tweets['trigram'] = df_tweets[colname].apply(trigram_creation)
+        df_tweets['bigram_pos'] = df_tweets['pos'].apply(bigram_creation)
+        df_tweets['trigram_pos'] = df_tweets['pos'].apply(trigram_creation)
+        df_tweets['rejoin'] = df_tweets[colname].apply(rejoin)
+
+        # Stopword
+        df_tweets['stopped'] = df_tweets[colname].apply(stopword_removal)
+        df_tweets['rejoin2'] = df_tweets['stopped'].apply(rejoin)
+
         logging.debug("process_tweets(): Dumping processed dataframe into '../data/postprocessed.pkl'")
         joblib.dump(df_tweets, '../data/postprocessed.pkl')
     else:
         logging.debug("process_tweets(): Bypassing processing step, loading 'postprocessed.pkl'.")
         df_tweets = joblib.load('../data/postprocessed.pkl')
-    # TODO rerun processing with changes
     return df_tweets
-
 
 
 # region Helper Functions
@@ -126,12 +135,20 @@ def tokenize(corpus):  # or just word tokenizing
 
 def bigram_creation(corpus):
     """Creates list of bigrams from text"""
-    return list(zip(corpus, corpus[1:]))
+    grams = list(zip(corpus, corpus[1:]))
+    out = []
+    for gram in grams:
+        out.append('-'.join(gram))
+    return out
 
 
 def trigram_creation(corpus):
     """Creates list of trigrams from text"""
-    return list(zip(corpus, corpus[1:], corpus[2:]))
+    grams = list(zip(corpus, corpus[1:], corpus[2:]))
+    out = []
+    for gram in grams:
+        out.append('-'.join(gram))
+    return out
 # endregion
 
 
@@ -152,5 +169,28 @@ def porter_stemming(text):
     pstem = PorterStemmer()
     return [pstem.stem(word) for word in text]
 
+
+def rejoin(text):
+    return ' '.join(text)
+
 # endregion
 # endregion
+
+def temp_checkpoint():
+    df_tweets = joblib.load('../data/normalize-checkpoints/point3.pkl')
+    colname='tweet'
+    df_tweets[colname] = df_tweets[colname].apply(porter_stemming)
+
+    # TODO with and without stopwords?
+    df_tweets['bigram'] = df_tweets[colname].apply(bigram_creation)
+    df_tweets['trigram'] = df_tweets[colname].apply(trigram_creation)
+    df_tweets['bigram_pos'] = df_tweets['pos'].apply(bigram_creation)
+    df_tweets['trigram_pos'] = df_tweets['pos'].apply(trigram_creation)
+    df_tweets['rejoin'] = df_tweets[colname].apply(rejoin)
+
+    # Stopword
+    df_tweets['stopped'] = df_tweets[colname].apply(stopword_removal)
+    df_tweets['rejoin2'] = df_tweets['stopped'].apply(rejoin)
+
+    logging.debug("process_tweets(): Dumping processed dataframe into '../data/postprocessed.pkl'")
+    joblib.dump(df_tweets, '../data/postprocessed.pkl')
