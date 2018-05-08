@@ -19,7 +19,7 @@ REPROCESS = False
 def main():
     tweets = pd.read_csv('../data/data.csv', index_col=0)
     tweets = normalize.process_tweets(tweets, reprocess=REPROCESS)
-    naive_bayes.train_naive_bayes(tweets, 'tweet', TEST_SIZE, RANDOM_STATE)
+    trees.train_decision_tree(tweets, 'tweet', TEST_SIZE, RANDOM_STATE)
 
 
 

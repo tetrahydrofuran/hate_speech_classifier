@@ -1,1 +1,1 @@
-__all__ = ['custom_report', 'naive_bayes']
+__all__ = ['custom_report', 'naive_bayes', 'trees']
