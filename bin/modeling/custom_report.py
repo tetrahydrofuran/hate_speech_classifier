@@ -1,5 +1,5 @@
-from sklearn.metrics.classification import *
 import numpy as np
+from sklearn.metrics.classification import *
 
 
 # This is `sklearn.metrics.classification_report` modified so that it returns the values numerically instead
@@ -60,7 +60,9 @@ def classification_report(y_true, y_pred, labels=None, target_names=None,
                                                   average=None,
                                                   sample_weight=sample_weight)
 
-    outlist.append(p, r, f1, s)
+    # If I could do this again, I would append each four separately instead of in a tuple.
+    outlist.append((p, r, f1, s))
+
     row_fmt = u'{:>{width}s} ' + u' {:>9.{digits}f}' * 3 + u' {:>9}\n'
     rows = zip(target_names, p, r, f1, s)
     for row in rows:

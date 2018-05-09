@@ -1,11 +1,9 @@
 import logging
-import numpy as np
-import os
 
 import pandas as pd
 
+from modeling import model_roulette
 from processing import *
-from modeling import *
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -19,7 +17,7 @@ REPROCESS = False
 def main():
     tweets = pd.read_csv('../data/data.csv', index_col=0)
     tweets = normalize.process_tweets(tweets, reprocess=REPROCESS)
-    trees.train_decision_tree(tweets, 'tweet', TEST_SIZE, RANDOM_STATE)
+    model_roulette.model_roulette(tweets, size=TEST_SIZE, state=RANDOM_STATE)
 
 
 

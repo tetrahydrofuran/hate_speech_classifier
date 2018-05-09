@@ -1,7 +1,9 @@
-from sklearn.tree import tree
-from sklearn.externals import joblib
 import logging
 import os
+
+from sklearn.externals import joblib
+from sklearn.tree import tree
+
 from . import tfidf
 
 
@@ -11,7 +13,7 @@ def train_decision_tree(df, column, size=0.3, state=42):
     Xtr, Xte, Ytr, Yte = tfidf.generate_tfidf_split(df, column, size, state)
 
     logging.debug('train_decision_tree(): Training model')
-    clf.fit(Xtr.toarray(), Ytr)
+    clf.fit(Xtr, Ytr)
     logging.debug("train_decision_tree(): Dumping DecisionTreeClassifier to '" + filepath + "'")
     joblib.dump(clf, filepath)
     return clf, Xte, Yte
