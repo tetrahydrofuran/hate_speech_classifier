@@ -11,15 +11,18 @@ logging.getLogger().setLevel(logging.DEBUG)
 TEST_SIZE = 0.3  # Size of test set
 RANDOM_STATE = 42  # np.random.randint(99999)  # random seed
 REPROCESS = False
+BINARY_CLASSIFICATION = True
+LABEL = 'what'
 # endregion
 
 
 def main():
     tweets = pd.read_csv('../data/data.csv', index_col=0)
     tweets = normalize.process_tweets(tweets, reprocess=REPROCESS)
-    model_roulette.model_roulette(tweets, size=TEST_SIZE, state=RANDOM_STATE)
+    if BINARY_CLASSIFICATION:
+        tweets['class'] = tweets['class'].apply(normalize.make_binary, args=(1, 2))
 
-
+    model_roulette.model_roulette(tweets, label=LABEL, size=TEST_SIZE, state=RANDOM_STATE, binary=BINARY_CLASSIFICATION)
 
 
 if __name__ == "__main__":

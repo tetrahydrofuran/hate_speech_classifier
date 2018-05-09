@@ -1,4 +1,3 @@
-import numpy as np
 from sklearn.metrics.classification import *
 
 
@@ -60,8 +59,10 @@ def classification_report(y_true, y_pred, labels=None, target_names=None,
                                                   average=None,
                                                   sample_weight=sample_weight)
 
-    # If I could do this again, I would append each four separately instead of in a tuple.
-    outlist.append((p, r, f1, s))
+    outlist.append(p)
+    outlist.append(r)
+    outlist.append(f1)
+    outlist.append(s)
 
     row_fmt = u'{:>{width}s} ' + u' {:>9.{digits}f}' * 3 + u' {:>9}\n'
     rows = zip(target_names, p, r, f1, s)

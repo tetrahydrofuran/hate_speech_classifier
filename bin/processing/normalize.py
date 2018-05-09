@@ -7,8 +7,8 @@ import nltk
 from nltk.stem.porter import PorterStemmer
 from sklearn.externals import joblib
 
-from . import spelling as sp
 from . import pos_classifier as pc
+from . import spelling as sp
 
 
 # TODO run with stopwords without stopwords, save all inputs
@@ -176,21 +176,9 @@ def rejoin(text):
 # endregion
 # endregion
 
-def temp_checkpoint():
-    df_tweets = joblib.load('../data/normalize-checkpoints/point3.pkl')
-    colname='tweet'
-    df_tweets[colname] = df_tweets[colname].apply(porter_stemming)
 
-    # TODO with and without stopwords?
-    df_tweets['bigram'] = df_tweets[colname].apply(bigram_creation)
-    df_tweets['trigram'] = df_tweets[colname].apply(trigram_creation)
-    df_tweets['bigram_pos'] = df_tweets['pos'].apply(bigram_creation)
-    df_tweets['trigram_pos'] = df_tweets['pos'].apply(trigram_creation)
-    df_tweets['rejoin'] = df_tweets[colname].apply(rejoin)
-
-    # Stopword
-    df_tweets['stopped'] = df_tweets[colname].apply(stopword_removal)
-    df_tweets['rejoin2'] = df_tweets['stopped'].apply(rejoin)
-
-    logging.debug("process_tweets(): Dumping processed dataframe into '../data/postprocessed.pkl'")
-    joblib.dump(df_tweets, '../data/postprocessed.pkl')
+def make_binary(text, class_to_change, class_changed_to):
+    if text == class_to_change:
+        return class_changed_to
+    else:
+        return text
