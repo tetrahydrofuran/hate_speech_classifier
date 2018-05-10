@@ -26,3 +26,7 @@ pos_bayes_classifier, pos_tree_classifier trained, but due to bad workflow, is n
 * `pandas`
 * `numpy`
 * `nltk`
+
+### If I Could Do It Over Again
+* Save the `TfidfVectorizer()` objects fitted to my data
+* Design with class imbalance in mind from the beginning

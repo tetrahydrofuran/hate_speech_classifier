@@ -1,9 +1,10 @@
-from sklearn.naive_bayes import GaussianNB
-from sklearn.externals import joblib
-from . import tfidf
-
 import logging
 import os
+
+from sklearn.externals import joblib
+from sklearn.naive_bayes import GaussianNB
+
+from . import tfidf
 
 
 def train_naive_bayes(df, column, size=0.3, state=42):
@@ -12,10 +13,16 @@ def train_naive_bayes(df, column, size=0.3, state=42):
     Xtr, Xte, Ytr, Yte = tfidf.generate_tfidf_split(df, column, size, state)
 
     logging.debug('train_naive_bayes(): Training model')
-    clf.fit(Xtr.toarray(), Ytr)
-    logging.debug("train_naive_bayes(): Dumping GaussianNB to '" + filepath + "'")
-    joblib.dump(clf, filepath)
-    return clf, Xte.toarray(), Yte
+    try:
+        clf.fit(Xtr.toarray(), Ytr)
+        logging.debug("train_naive_bayes(): Dumping GaussianNB to '" + filepath + "'")
+        joblib.dump(clf, filepath)
+        return clf, Xte.toarray(), Yte
+    except AttributeError:  # if PCA
+        clf.fit(Xtr, Ytr)
+        logging.debug("train_naive_bayes(): Dumping GaussianNB to '" + filepath + "'")
+        joblib.dump(clf, filepath)
+        return clf, Xte, Yte
 
 
 def get_naive_bayes(suffix):
