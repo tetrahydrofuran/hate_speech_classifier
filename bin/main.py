@@ -37,6 +37,5 @@ def main():
         compound_model.generate_compound_model(tweets, TEST_SIZE, RANDOM_STATE)
 
 
-
 if __name__ == "__main__":
     main()

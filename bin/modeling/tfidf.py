@@ -11,6 +11,7 @@ pcaSize = 50
 
 
 def pcaSetter(pca, size):
+    """Sets global PCA variable to determine whether or not to conduct PCA"""
     global doPCA
     global pcaSize
     doPCA = pca
@@ -20,11 +21,12 @@ def pcaSetter(pca, size):
 def generate_tfidf_split(df, column='tweet', size=0.3, state=42):
     """
     If I could do this over again, I would return the TfidfVectorizer object, and not the train-test split.
-    :param df:
-    :param column:
-    :param size:
-    :param state:
-    :return:
+    Applies tf-idf weights to vocabulary and returns a train-test split.
+    :param df: pandas DataFrame
+    :param column: Column to process
+    :param size: Size of test set
+    :param state: Random state for train-test split
+    :return: 4 variables representing a train test split
     """
     logging.debug('generate_tfidf_split(): Transforming column: ' + column)
     train, test = train_test_split(df, test_size=size, random_state=state, stratify=df['class'])
@@ -41,7 +43,3 @@ def generate_tfidf_split(df, column='tweet', size=0.3, state=42):
         X_test = pca.transform(X_test.toarray())
 
     return X_train, X_test, Y_train, Y_test
-
-
-def rejoin(text):
-    return ' '.join(text)

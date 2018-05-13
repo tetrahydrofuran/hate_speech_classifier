@@ -8,6 +8,7 @@ from . import tfidf
 
 
 def train_decision_tree(df, column, size=0.3, state=42):
+    """Creates and trains a decision tree classifier using tf-idf weights"""
     clf = tree.DecisionTreeClassifier()
     filepath = '../data/models/decision_tree_' + column + '.pkl'
     Xtr, Xte, Ytr, Yte = tfidf.generate_tfidf_split(df, column, size, state)
@@ -20,6 +21,7 @@ def train_decision_tree(df, column, size=0.3, state=42):
 
 
 def get_decision_tree(suffix):
+    """Loads and returns decision tree trained on the specified column"""
     filepath = '../data/models/decision_tree_' + suffix + '.pkl'
     if os.path.isfile(filepath):
         logging.debug('get_decision_tree(): Loading saved classifier.')

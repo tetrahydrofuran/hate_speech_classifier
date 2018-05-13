@@ -14,10 +14,10 @@ from sklearn.tree import DecisionTreeClassifier
 from .tfidf import rejoin
 
 
-# TODO Implement PCA
-
-
 def generate_compound_model(df, size, state):
+    """
+    Creates a list of models that will each predict upon the same observation and produce a consensus classification
+    """
     models = [DecisionTreeClassifier(), DecisionTreeClassifier(), DecisionTreeClassifier(), GradientBoostingClassifier(
         max_depth=10), GradientBoostingClassifier(max_depth=10)]
     columns = ['tweet', 'bigram', 'trigram_pos', 'pos', 'trigram']
@@ -65,6 +65,7 @@ def generate_compound_model(df, size, state):
 
 
 def compound_tfidf(df, column):
+    """Modified version of generate_tfidf_split() to use for the compound model"""
     logging.debug('compound_tfidf(): Transforming column: ' + column)
     vectorizer = TfidfVectorizer()
     X_train = vectorizer.fit_transform(df[column].apply(rejoin))

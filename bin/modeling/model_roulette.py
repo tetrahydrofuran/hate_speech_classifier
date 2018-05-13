@@ -9,6 +9,7 @@ from . import *
 def model_roulette(dataframe, label,
                    columns=('tweet', 'bigram', 'trigram', 'pos', 'bigram_pos', 'trigram_pos'),
                    size=0.3, state=42, binary=False):
+    """Loops through each of five individual model types, and each of six possible feature columns"""
     list_models = []
     reports = []
     for column in columns:
@@ -30,6 +31,7 @@ def model_roulette(dataframe, label,
 
 
 def loop_models(index, dataframe, column, size, state):
+    """Trains model based on index of loop"""
     if index == 0:
         logging.debug('loop_models(): GaussianNB')
         return naive_bayes.train_naive_bayes(dataframe, column, size, state)
@@ -48,6 +50,7 @@ def loop_models(index, dataframe, column, size, state):
 
 
 def format_report(reports, label, binary=False):
+    """Outputs metrics into dataframe"""
     # region Initialization
     label = [label]
     models = ['Naive Bayes', 'Decision Tree', 'Stochastic Gradient Desc.', 'Gradient Boosted Trees',

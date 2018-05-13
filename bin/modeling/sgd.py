@@ -10,6 +10,7 @@ from . import tfidf
 
 
 def train_sgd(df, column, size=0.3, state=42):
+    """Creates and trains a gradient boosted classifier using tf-idf weights"""
     filepath = '../data/models/sgd_' + column + '.pkl'
     Xtr, Xte, Ytr, Yte = tfidf.generate_tfidf_split(df, column, size, state)
 
@@ -33,6 +34,7 @@ def train_sgd(df, column, size=0.3, state=42):
 
 
 def get_sgd(suffix):
+    """Loads and returns gradient boosted classifier trained on the specified column"""
     filepath = '../data/models/sgd_' + suffix + '.pkl'
     if os.path.isfile(filepath):
         logging.debug('get_sgd(): Loading saved classifier.')

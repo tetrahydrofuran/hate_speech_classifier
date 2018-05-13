@@ -18,7 +18,7 @@ def process_tweets(df_tweets, colname='tweet', reprocess=False):
     :param df_tweets: pandas DataFrame
     :param colname: String name of column containing tweet
     :param reprocess: Boolean to redo processing steps if postprocessed frame does not exist
-    :return: TODO fill out
+    :return: Inputted pandas DataFrame with column processed
     """
     logging.debug('Entering process_tweets()')
     if not os.path.isfile('../data/postprocessed.pkl') or reprocess:
@@ -171,6 +171,7 @@ def porter_stemming(text):
 
 
 def rejoin(text):
+    """Rejoins tokenized items"""
     return ' '.join(text)
 
 # endregion
@@ -178,6 +179,7 @@ def rejoin(text):
 
 
 def make_binary(text, class_to_change, class_changed_to):
+    """Convert 3 class-classification to binary problem"""
     if text == class_to_change:
         return class_changed_to
     else:

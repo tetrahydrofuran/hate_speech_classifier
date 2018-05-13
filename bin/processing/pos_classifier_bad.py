@@ -9,8 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 
 """
-These classifiers were trained too specifically, and are not generalizable to new information.
-A new classifier will be constructed, and features more carefully selected.
+These classifiers were trained without returning the DictVectorizer, and as a result, are not generalizable 
+to new information.  A new classifier will be constructed, and features more carefully selected.
 """
 
 def tag_pos(data, model):
