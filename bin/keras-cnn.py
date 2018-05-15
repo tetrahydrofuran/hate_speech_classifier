@@ -7,7 +7,7 @@ from keras.callbacks import TensorBoard
 from keras.layers import Conv1D, MaxPool1D, Dropout, Dense, Flatten
 from keras.utils import np_utils
 from sklearn.externals import joblib
-from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
 
 batch_size = 50
 num_epochs = 30
@@ -41,6 +41,7 @@ class Metrics(Callback):
         self.val_recalls.append(_val_recall)
         self.val_precisions.append(_val_precision)
         print("— val_f1: % f — val_precision: % f — val_recall % f" % (_val_f1, _val_precision, _val_recall))
+        print(classification_report(val_targ, val_predict))
         return
 
 # Load, prep data
@@ -77,7 +78,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 model.fit(Xtr, Ytr, batch_size=batch_size, epochs=num_epochs, verbose=1, validation_split=0.1,
           callbacks=[TensorBoard(log_dir=os.path.expanduser('~/TensorBoard/')), metrics])
 scores = model.evaluate(Xte, Yte, verbose=1)
-print('Test Loss after Epoch 12 :', scores[0])
-print('Test Accuracy after Epoch 12: ', scores[1])
+print('Test Loss after Epoch 30 :', scores[0])
+print('Test Accuracy after Epoch 30: ', scores[1])
 model.save(os.path.expanduser('~/TensorBoard/kerasmodel.h5py'), 'w+')
 

@@ -2,7 +2,7 @@
 
 This project was created as part of the Metis data science bootcamp.
 
-Work in progress, readme will be updated upon completion.
+The goal of this project was to construct a classifier to separate hate speech from other offensive twitter comments.
 
 
 ### Repository Description
@@ -42,6 +42,7 @@ Work in progress, readme will be updated upon completion.
 * `numpy`
 * `nltk`
 * `keras`
+* `h5py`
 
 ### If I Could Do It Over Again
 * Save the `TfidfVectorizer()` objects fitted to my data
